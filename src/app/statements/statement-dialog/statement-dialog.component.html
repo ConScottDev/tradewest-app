@@ -1,0 +1,59 @@
+<div class="dialog-header d-flex justify-content-between">
+  <h2 mat-dialog-title>Statement Details</h2>
+  <button
+    mat-raised-button
+    type="button"
+    class="btn btn-danger btn-link btn-sm btn-just-icon"
+    (click)="closeDialog()"
+  >
+    <i class="material-icons">close</i>
+  </button>
+</div>
+
+<div mat-dialog-content>
+  <p><strong>Statement No:</strong> {{ statement.invoiceNo }}</p>
+  <p><strong>Customer Name:</strong> {{ statement.customerName }}</p>
+  <p>
+    <strong>Statement Date:</strong>
+    {{ statement.invoiceDate | date : "dd/MM/yyyy" }}
+  </p>
+  <p>
+    <strong>Status:</strong>
+    {{ statement.status === "final" ? "Finished" : "Draft" }}
+  </p>
+</div>
+
+<div mat-dialog-actions class="justify-content-between">
+  <button mat-button [matMenuTriggerFor]="menu" class="btn btn-dark">
+    Options
+  </button>
+  <mat-menu #menu="matMenu">
+    <button
+      mat-menu-item
+      *ngIf="statement.status === 'final'"
+      [disabled]="statement.status === 'draft'"
+      (click)="dialogRef.close('openPDF')"
+    >
+      Open PDF
+    </button>
+    <button
+      mat-menu-item
+      *ngIf="statement.status === 'final'"
+      [disabled]="statement.status === 'draft'"
+      (click)="dialogRef.close('download')"
+    >
+      Download PDF
+    </button>
+    <button mat-menu-item (click)="editStatement()">Edit Statement</button>
+    <button mat-menu-item (click)="sendEmail()">Email Statement</button>
+  </mat-menu>
+  
+  <button
+    mat-raised-button
+    class="btn"
+    style="background-color: #c70000"
+    (click)="deleteStatement()"
+  >
+    Delete
+  </button>
+</div>

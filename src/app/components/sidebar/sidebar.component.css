@@ -1,0 +1,9 @@
+ul li {
+  list-style-type: none;
+}
+
+.child-active {
+  background-color: rgba(200, 200, 200, 0.2);
+  color: #3c4858;
+  box-shadow: none;
+}

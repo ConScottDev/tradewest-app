@@ -1,0 +1,262 @@
+<div class="main-content">
+  <form [formGroup]="form">
+    <div class="container-fluid pt-2 mb-5">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card border-secondary">
+            <div class="card-header card-header-danger">
+              <h4 class="card-title">Customer Details</h4>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-8">
+                  <mat-form-field>
+                    <!-- <label for="name">Name</label> -->
+                    <input
+                      matInput
+                      placeholder="Name"
+                      formControlName="customerName"
+                      required
+                    />
+                    <mat-error
+                      *ngIf="form.get('customerName').hasError('required')"
+                    >
+                      Customer name is required.
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field>
+                    <input
+                      matInput
+                      placeholder="Address 1"
+                      formControlName="address1"
+                      required
+                    />
+                    <mat-error
+                      *ngIf="form.get('address1').hasError('required')"
+                    >
+                      Address 1 is required.
+                    </mat-error>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <input
+                      matInput
+                      placeholder="Address 2"
+                      formControlName="address2"
+                    />
+                  </mat-form-field>
+                  <mat-form-field>
+                    <input
+                      matInput
+                      placeholder="Address 3"
+                      formControlName="address3"
+                    />
+                  </mat-form-field>
+                  <mat-form-field>
+                    <input
+                      matInput
+                      placeholder="Address 4"
+                      formControlName="address4"
+                    />
+                  </mat-form-field>
+                </div>
+                <div class="col-md-4">
+                  <mat-form-field>
+                    <input
+                      type="number"
+                      matInput
+                      placeholder="Statement Number"
+                      formControlName="invoiceNo"
+                      required
+                    />
+                    <mat-error
+                      *ngIf="form.get('invoiceNo').hasError('invoiceNoExists')"
+                    >
+                      This statement number already exists.
+                    </mat-error>
+                    <mat-error
+                      *ngIf="form.get('invoiceNo').hasError('required')"
+                    >
+                      Statement number is required.
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field>
+                    <mat-label>Statement Date</mat-label>
+                    <input
+                      matInput
+                      [matDatepicker]="picker"
+                      formControlName="invoiceDate"
+                      required
+                    />
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="picker"
+                      style="font-size: large"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                    <mat-error
+                      *ngIf="form.get('invoiceDate').hasError('required')"
+                    >
+                      Statement date is required.
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4"></div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card border-secondary mt-2">
+            <div
+              class="card-header d-flex card-header-danger justify-content-between"
+            >
+              <h4 class="card-title">Statement Details</h4>
+              <div>
+                <a mat-button class="nav-link" (click)="updateStatement()">
+                  <i class="material-icons">save</i> Save
+                </a>
+                <a
+                  *ngIf="form.get('status').value === 'draft'"
+                  mat-button
+                  class="nav-link"
+                  (click)="createStatement()"
+                  [disabled]="!form.valid"
+                >
+                  <i class="material-icons">open_in_new</i> Create Statement
+                  <div class="ripple-container"></div>
+                </a>
+                <!--   <a
+                    mat-button
+                    class="nav-link"
+                    (click)="generatePDF('download')"
+                    [disabled]="!form.valid"
+                  >
+                    <i class="material-icons">download</i> Download
+                    <div class="ripple-container"></div>
+                  </a> -->
+              </div>
+            </div>
+            <div class="card-body">
+              <button
+                mat-raised-button
+                type="button"
+                class="btn btn-dark pull-right"
+                style="color: white"
+                (click)="addProduct()"
+              >
+                Add Invoice
+              </button>
+              <div class="clearfix"></div>
+
+              <div class="row">
+                <table class="table">
+                  <thead>
+                    <th width="20%">Invoice Date</th>
+                    <th width="65%">Invoice No.</th>
+                    <th width="5%">Amount</th>
+                    <th width="5%">Received</th>
+                    <th width="5%"></th>
+                  </thead>
+                  <tbody formArrayName="products">
+                    <tr
+                      *ngFor="let product of products.controls; let i = index"
+                      [formGroupName]="i"
+                    >
+                      <td scope="row">
+                        <mat-form-field>
+                          <input
+                            matInput
+                            type="date"
+                            formControlName="date"
+                            required
+                          />
+                          <mat-error
+                            *ngIf="product.get('date').hasError('required')"
+                          >
+                            Date is required.
+                          </mat-error>
+                        </mat-form-field>
+                      </td>
+                      <td>
+                        <mat-form-field>
+                          <input
+                            matInput
+                            type="text"
+                            formControlName="description"
+                            required
+                          />
+                          <mat-error
+                            *ngIf="
+                              product.get('description').hasError('required')
+                            "
+                          >
+                            Description is required.
+                          </mat-error>
+                        </mat-form-field>
+                      </td>
+                      <td>
+                        <mat-form-field>
+                          <input
+                            matInput
+                            type="number"
+                            formControlName="amount"
+                            required
+                          />
+                          <mat-error
+                            *ngIf="product.get('amount').hasError('required')"
+                          >
+                            Amount is required.
+                          </mat-error>
+                          <mat-error
+                            *ngIf="product.get('amount').hasError('min')"
+                          >
+                            Amount must be greater than 0.
+                          </mat-error>
+                        </mat-form-field>
+                      </td>
+                      <td>
+                        <mat-form-field>
+                          <input
+                            matInput
+                            type="number"
+                            formControlName="received"
+                            required
+                          />
+                          <mat-error
+                            *ngIf="product.get('received').hasError('required')"
+                          >
+                            Received amount is required.
+                          </mat-error>
+                          <mat-error
+                            *ngIf="product.get('received').hasError('min')"
+                          >
+                            Received must be greater than 0.
+                          </mat-error>
+                        </mat-form-field>
+                      </td>
+                      <td>
+                        <button
+                          mat-raised-button
+                          type="button"
+                          class="btn btn-danger btn-link btn-sm btn-just-icon"
+                          (click)="removeProduct(i)"
+                        >
+                          <i class="material-icons">close</i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,54 @@
+<div class="logo">
+  <a>
+    <div class="logo-img">
+      <img src="/assets/img/tradewest-mobile-full.png" />
+    </div>
+  </a>
+</div>
+<div class="sidebar-wrapper">
+  <ul class="nav">
+    <li *ngFor="let menuItem of menuItems">
+      <ng-container *ngIf="!menuItem.children; else hasChildren">
+        <!-- Regular Menu Item -->
+        <a
+          class="nav-link"
+          [routerLink]="[menuItem.path]"
+          [routerLinkActive]="'active'"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <i class="material-icons">{{ menuItem.icon }}</i>
+          <p>{{ menuItem.title }}</p>
+        </a>
+      </ng-container>
+
+      <!-- Menu Item with Submenu (Children) -->
+      <ng-template #hasChildren>
+        <a
+          class="nav-link"
+          href="javascript:void(0)"
+          (click)="menuItem.expanded = !menuItem.expanded"
+          [class.child-active]="isChildRouteActive(menuItem.children)"
+        >
+          <i class="material-icons">{{ menuItem.icon }}</i>
+          <p style="display: inline-block">{{ menuItem.title }}</p>
+          <i style="float: right" class="material-icons">{{
+            menuItem.expanded ? "expand_less" : "expand_more"
+          }}</i>
+        </a>
+
+        <!-- Submenu that shows when expanded -->
+        <ul *ngIf="menuItem.expanded" class="nav-submenu">
+          <li
+            *ngFor="let child of menuItem.children"
+            [routerLinkActive]="['active']"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <a class="nav-link" [routerLink]="[child.path]">{{
+              child.title
+            }}</a>
+          </li>
+        </ul>
+      </ng-template>
+    </li>
+  </ul>
+</div>

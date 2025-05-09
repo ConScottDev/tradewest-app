@@ -1,0 +1,113 @@
+<div class="main-content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header card-header-tabs card-header-danger">
+              <h4 class="card-title">Quotes</h4>
+              <div class="search-container" [class.expanded]="isSearchExpanded">
+                <button mat-icon-button (click)="toggleSearch()">
+                  <mat-icon>search</mat-icon>
+                </button>
+                <input
+                  *ngIf="isSearchExpanded"
+                  matInput
+                  type="text"
+                  placeholder="Search Quote Number or Customer Name"
+                  [(ngModel)]="searchTerm"
+                  (input)="onSearch()"
+                />
+              </div>
+              <div class="nav-tabs-navigation">
+                <div class="nav-tabs-wrapper">
+                  <ul class="nav nav-tabs" data-tabs="tabs">
+                    <li class="nav-item">
+                      <a
+                        mat-button
+                        class="nav-link"
+                        [class.active]="currentFilter === 'all'"
+                        (click)="setFilter('all')"
+                      >
+                        <i class="material-icons">list</i> All
+                        <div class="ripple-container"></div>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a
+                        mat-button
+                        class="nav-link"
+                        [class.active]="currentFilter === 'drafts'"
+                        (click)="setFilter('drafts')"
+                      >
+                        <i class="material-icons">drafts</i> Drafts
+                        <div class="ripple-container"></div>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <th>Quote No.</th>
+                    <th>Customer Name</th>
+                    <th>Date</th>
+                    <th>Subtotal</th>
+                    <th>Total</th>
+                    <th></th>
+                  </thead>
+                  <tbody>
+                    <tr *ngIf="(filteredQuotes$ | async)?.length === 0">
+                      <td colspan="5" class="text-center">
+                        No quotes to display!
+                      </td>
+                    </tr>
+                    <!-- Filter quote based on current filter -->
+                    <tr
+                      *ngFor="
+                        let quote of filteredQuotes$ | async;
+                        let i = index
+                      "
+                      (click)="openDialog(quote)"
+                    >
+                      <td>
+                        {{ quote.quoteNo }}
+                        <span
+                          class="text-success"
+                          *ngIf="quote.status === 'draft'"
+                          >(draft)</span
+                        >
+                        <!-- Show (draft) if status is draft -->
+                      </td>
+                      <td>{{ quote.customerName }}</td>
+                      <td>{{ quote?.quoteDate | date : "dd/MM/yyyy" }}</td>
+                      <td class="text-primary">
+                        €{{ quote.subTotal | number : "1.2-2" }}
+                      </td>
+                      <td class="text-primary">
+                        €{{ quote.quoteTotal }}
+                      </td>
+                      <td>
+                        <button
+                          mat-raised-button
+                          type="button"
+                          matTooltip="Open PDF"
+                          [matTooltipPosition]="'above'"
+                          class="btn btn-info btn-link btn-sm btn-just-icon"
+                          (click)="openPDF(quote, 'open'); $event.stopPropagation()"                        >
+                          <i class="material-icons">file_open</i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

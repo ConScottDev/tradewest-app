@@ -1,0 +1,337 @@
+<div class="main-content">
+    <form [formGroup]="form">
+      <div class="container-fluid pt-2 mb-5">
+        <div class="row">
+          <div class="col-md-7">
+            <div class="card border-secondary">
+              <div class="card-header card-header-danger">
+                <h4 class="card-title">Customer Details</h4>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-8">
+                    <mat-form-field>
+                      <!-- <label for="name">Name</label> -->
+                      <input
+                        matInput
+                        placeholder="Name"
+                        formControlName="customerName"
+                        required
+                      />
+                      <mat-error
+                        *ngIf="form.get('customerName').hasError('required')"
+                      >
+                        Customer name is required.
+                      </mat-error>
+                    </mat-form-field>
+  
+                    <mat-form-field>
+                      <input
+                        matInput
+                        placeholder="Address 1"
+                        formControlName="address1"
+                        required
+                      />
+                      <mat-error
+                        *ngIf="form.get('address1').hasError('required')"
+                      >
+                        Address 1 is required.
+                      </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                      <input
+                        matInput
+                        placeholder="Address 2"
+                        formControlName="address2"
+                      />
+                    </mat-form-field>
+                    <mat-form-field>
+                      <input
+                        matInput
+                        placeholder="Address 3"
+                        formControlName="address3"
+                      />
+                    </mat-form-field>
+                    <mat-form-field>
+                      <input
+                        matInput
+                        placeholder="Address 4"
+                        formControlName="address4"
+                      />
+                    </mat-form-field>
+                  </div>
+                  <div class="col-md-4">
+                    <mat-form-field>
+                      <input
+                        type="number"
+                        matInput
+                        placeholder="Quote Number"
+                        formControlName="quoteNo"
+                        required
+                      />
+                      <mat-error
+                        *ngIf="form.get('quoteNo').hasError('quoteNoExists')"
+                      >
+                        This quote number already exists.
+                      </mat-error>
+                      <mat-error
+                        *ngIf="form.get('quoteNo').hasError('required')"
+                      >
+                        Quote number is required.
+                      </mat-error>
+                    </mat-form-field>
+  
+                    <mat-form-field>
+                      <mat-label>Quote Date</mat-label>
+                      <input
+                        matInput
+                        [matDatepicker]="picker"
+                        formControlName="quoteDate"
+                        required
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="picker"
+                        style="font-size: large"
+                      ></mat-datepicker-toggle>
+                      <mat-datepicker #picker></mat-datepicker>
+                      <mat-error
+                        *ngIf="form.get('quoteDate').hasError('required')"
+                      >
+                        Quote date is required.
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <div class="col-md-5">
+            <div class="card">
+              <div
+                class="card-header card-header-tabs card-header-primary d-flex justify-content-between"
+              >
+                <h4 class="card-title">Recent Quotes</h4>
+                <a mat-button class="nav-link" (click)="viewAllQuotes()">
+                  <i class="material-icons">folder_open</i> View All
+                </a>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <th>No.</th>
+                      <th>Name</th>
+                      <th>Date</th>
+                    </thead>
+                    <tbody>
+                      <tr *ngIf="(quotes$ | async)?.length === 0">
+                        <td colspan="3" class="text-center">
+                          No recent quotes
+                        </td>
+                      </tr>
+                      <!-- Filter quotes based on current filter -->
+                      <tr
+                        *ngFor="let quote of quotes$ | async; let i = index"
+                        (click)="openDialog(quote)"
+                      >
+                        <td>
+                          {{ quote.quoteNo }}
+                          <span
+                            class="text-success"
+                            *ngIf="quote.status === 'draft'"
+                            >(draft)</span
+                          >
+                          <!-- Show (draft) if status is draft -->
+                        </td>
+                        <td>{{ quote.customerName }}</td>
+                        <td>
+                          {{ quote?.quoteDate | date : "dd/MM/yyyy" }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card border-secondary mt-2">
+              <div
+                class="card-header d-flex card-header-danger justify-content-between"
+              >
+                <h4 class="card-title">Quote Details</h4>
+                <div>
+                  <a mat-button class="nav-link" (click)="saveAsDraft()">
+                    <i class="material-icons">save</i> Save as Draft
+                  </a>
+                  <a
+                    mat-button
+                    class="nav-link"
+                    (click)="generatePDF('print', products)"
+                    [disabled]="!form.valid"
+                  >
+                    <i class="material-icons">print</i> Print
+                    <div class="ripple-container"></div>
+                  </a>
+                  <a
+                    mat-button
+                    class="nav-link"
+                    (click)="generatePDF('open',products)"
+                    [disabled]="!form.valid"
+                  >
+                    <i class="material-icons">open_in_new</i> Open
+                    <div class="ripple-container"></div>
+                  </a>
+                  <a
+                    mat-button
+                    class="nav-link"
+                    (click)="generatePDF('download', products)"
+                    [disabled]="!form.valid"
+                  >
+                    <i class="material-icons">download</i> Download
+                    <div class="ripple-container"></div>
+                  </a>
+                </div>
+              </div>
+              <div class="card-body">
+                <button
+                  mat-raised-button
+                  type="button"
+                  class="btn btn-dark pull-right"
+                  style="color: white"
+                  (click)="addProduct()"
+                >
+                  Add Product
+                </button>
+                <div class="clearfix"></div>
+  
+                <div class="row">
+                  <table class="table" style="table-layout: fixed; width: 100%">
+                    <thead>
+                      <th style="width: 7%">Quantity</th>
+                      <th style="width: 10%">Item</th>
+                      <th style="width: 50%">Description</th>
+                      <th style="width: 8%">Unit Price</th>
+                      <th>Tax%</th>
+                      <th>VAT</th>
+                      <th>Total</th>
+                      <th></th>
+                    </thead>
+                    <tbody formArrayName="products">
+                      <tr
+                        *ngFor="let product of products.controls; let i = index"
+                        [formGroupName]="i"
+                      >
+                        <td>
+                          <mat-form-field>
+                            <input
+                              matInput
+                              type="number"
+                              formControlName="qty"
+                              required
+                            />
+                            <mat-error
+                              *ngIf="product.get('qty').hasError('required')"
+                            >
+                              Quantity is required.
+                            </mat-error>
+                          </mat-form-field>
+                        </td>
+                        <td>
+                          <mat-form-field>
+                            <input matInput formControlName="item" />
+                  
+                          </mat-form-field>
+                        </td>
+                        <td>
+                          <mat-form-field>
+                            <input
+                              matInput
+                              type="text"
+                              formControlName="description"
+                              required
+                            />
+                            <mat-error
+                              *ngIf="
+                                product.get('description').hasError('required')
+                              "
+                            >
+                              Description is required.
+                            </mat-error>
+                          </mat-form-field>
+                        </td>
+                        <td>
+                          <mat-form-field>
+                            <input
+                              matInput
+                              type="number"
+                              formControlName="unitPrice"
+                              required
+                            />
+                            <mat-error
+                              *ngIf="
+                                product.get('unitPrice').hasError('required')
+                              "
+                            >
+                              Unit Price is required.
+                            </mat-error>
+                            <mat-error
+                              *ngIf="product.get('unitPrice').hasError('min')"
+                            >
+                              Amount must be greater than 0.
+                            </mat-error>
+                          </mat-form-field>
+                        </td>
+                        <td>
+                          <mat-form-field>
+                            <input
+                              matInput
+                              type="number"
+                              formControlName="tax"
+                              required
+                            />
+                            <mat-error
+                              *ngIf="product.get('tax').hasError('required')"
+                            >
+                              Tax is required.
+                            </mat-error>
+                          </mat-form-field>
+                        </td>
+                        <td>
+                          <p>
+                            {{ calculateVAT(product) | number : "1.2-2" }}
+                          </p>
+                        </td>
+                        <td>
+                          <p>
+                            {{ calculateTotal(product) | number : "1.2-2" }}
+                          </p>
+                        </td>
+                        <td>
+                          <button
+                            mat-raised-button
+                            type="button"
+                            matTooltip="Remove"
+                            [matTooltipPosition]="'above'"
+                            class="btn btn-danger btn-link btn-sm btn-just-icon"
+                            (click)="removeProduct()"
+                          >
+                            <i class="material-icons">close</i>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  

@@ -1,0 +1,60 @@
+<div class="dialog-header d-flex justify-content-between">
+    <h2 mat-dialog-title>Quote Details</h2>
+    <button
+      mat-raised-button
+      type="button"
+      class="btn btn-danger btn-link btn-sm btn-just-icon"
+      (click)="closeDialog()"
+    >
+      <i class="material-icons">close</i>
+    </button>
+  </div>
+  
+  <div mat-dialog-content>
+    <p><strong>Quote No:</strong> {{ quote.quoteNo }}</p>
+    <p><strong>Customer Name:</strong> {{ quote.customerName }}</p>
+    <p>
+      <strong>Quote Date:</strong>
+      {{ quote.quoteDate | date : "dd/MM/yyyy" }}
+    </p>
+    <p>
+      <strong>Status:</strong>
+      {{ quote.status === "final" ? "Finished" : "Draft" }}
+    </p>
+  </div>
+  
+  <div mat-dialog-actions class="justify-content-between">
+    <button mat-button [matMenuTriggerFor]="menu" class="btn btn-dark">
+      Options
+    </button>
+    <mat-menu #menu="matMenu">
+      <button
+        mat-menu-item
+        *ngIf="quote.status === 'final'"
+        [disabled]="quote.status === 'draft'"
+        (click)="dialogRef.close('openPDF')"
+      >
+        Open PDF
+      </button>
+      <button
+        mat-menu-item
+        *ngIf="quote.status === 'final'"
+        [disabled]="quote.status === 'draft'"
+        (click)="dialogRef.close('download')"
+      >
+        Download PDF
+      </button>
+      <button mat-menu-item (click)="editQuote()">Edit Quote</button>
+      <button mat-menu-item (click)="sendEmail()">Email Quote</button>
+    </mat-menu>
+    
+    <button
+      mat-raised-button
+      class="btn"
+      style="background-color: #c70000"
+      (click)="deleteQuote()"
+    >
+      Delete
+    </button>
+  </div>
+  

@@ -1,0 +1,43 @@
+<div class="main-content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header card-header-tabs card-header-danger">
+              <h4 class="card-title">Email Logs</h4>
+            </div>
+            <div class="card-body">
+              <div *ngIf="isLoading" class="text-center">
+                <!-- You can use a spinner or a simple message -->
+                <mat-spinner [diameter]="20"></mat-spinner> <!-- Use Angular Material spinner -->
+                <p>Loading emails, please wait...</p>
+              </div>
+              <div *ngIf="!isLoading" class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <th width="20%">Email</th>
+                    <th width="40%">Subject</th>
+                    <th width="20%">Status</th>
+                    <th width="20%">Date</th>
+                  </thead>
+                  <tbody>
+                    <!-- Iterate over email logs -->
+                    <tr
+                      *ngFor="let log of filteredEmailLogs$ | async; let i = index"
+                      (click)="openEmailDialog(log)"
+                    >
+                      <td>{{ log.email }}</td>
+                      <td>{{ log.subject }}</td>
+                      <td>{{ log.event }}</td>
+                      <td>{{ log._date | date: 'dd/MM/yyyy, HH:mm' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

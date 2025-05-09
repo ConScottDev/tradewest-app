@@ -1,0 +1,20 @@
+<h2 mat-dialog-title>Send Email</h2>
+    <mat-dialog-content>
+      <mat-form-field>
+        <input matInput placeholder="Recipient Email" type="email" [(ngModel)]="email" />
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Subject" [(ngModel)]="subject" />
+      </mat-form-field>
+      <mat-form-field>
+        <textarea matInput placeholder="Message" [(ngModel)]="message"></textarea>
+      </mat-form-field>
+
+      <div *ngIf="isSending" class="spinner-container">
+        <mat-spinner diameter="20"></mat-spinner>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+      <button mat-raised-button class="btn-dark" style="color: #fff;" (click)="sendEmail()">Send</button>
+      <button mat-raised-button (click)="dialogRef.close()">Cancel</button>
+    </mat-dialog-actions>

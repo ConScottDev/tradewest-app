@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>Email Information</h1>
+<div mat-dialog-content>
+  <p><strong>Email:</strong> {{ data.email }}</p>
+  <p><strong>Subject:</strong> {{ data.subject }}</p>
+  <p><strong>Status:</strong> {{ data.event }}</p>
+  <p><strong>Date:</strong> {{ data._date | date : "dd/MM/yyyy, HH:mm" }}</p>
+  <p *ngIf="emailContent && emailContent.data"><strong>Attachments:</strong> {{emailContent.data.attachmentCount}}</p>
+
+  <h2 mat-dialog-title>Message Content</h2>
+  <div *ngIf="emailContent && emailContent.data" [innerHTML]="emailContent.data.body"></div>
+  <p *ngIf="!emailContent">Loading content...</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onClose()">Close</button>
+</div>
