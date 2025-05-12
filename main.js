@@ -1,6 +1,7 @@
 const { app, BrowserWindow } = require("electron");
 const { autoUpdater } = require("electron-updater");
 const path = require("path");
+const { dialog } = require("electron");
 
 function createWindow() {
   const win = new BrowserWindow({ // Enable fullscreen mode
@@ -20,15 +21,16 @@ win.show();
   });
 }
 
-app.whenReady().then(() => {
-  createWindow();
+// app.whenReady().then(() => {
+//   createWindow();
 
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
-  });
-});
+//   app.on("activate", () => {
+//     if (BrowserWindow.getAllWindows().length === 0) {
+//       createWindow();
+//     }
+//   });
+// });
+app.on("ready", createWindow);
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
@@ -42,5 +44,16 @@ autoUpdater.on("update-available", () => {
 });
 
 autoUpdater.on("update-downloaded", () => {
-  console.log("Update downloaded");
+  const result = dialog.showMessageBoxSync({
+    type: "info",
+    buttons: ["Restart", "Later"],
+    defaultId: 0,
+    cancelId: 1,
+    title: "Update Ready",
+    message: "A new version has been downloaded. Restart now to install the update?"
+  });
+
+  if (result === 0) {
+    autoUpdater.quitAndInstall();
+  }
 });
