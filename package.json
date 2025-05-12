@@ -1,8 +1,16 @@
 {
   "name": "material-dashboard-angular",
   "version": "2.8.0",
+  "description": "Desktop application for Tradewest",
+  "author": {
+    "name": "Conor Scott",
+    "email": "conorpscott@outlook.com"
+  },
   "license": "MIT",
   "main": "main.js",
+  "overrides": {
+    "lmdb": "0.0.0"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -10,14 +18,47 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && ng serve -o",
+    "install:clean": "rimraf node_modules package-lock.json && npm install && ng serve -o",
     "preinstall": "npx npm-force-resolutions",
     "electron": "electron .",
-    "package-win": "electron-packager . --platform=win32 --arch=x64 --out=dist --overwrite --icon=src/assets/img/tradewest-mobile-full.ico"
+    "dist": "electron-builder --win nsis --x64",
+    "package-win": "electron-packager . --platform=win32 --arch=x64 --out=dist --overwrite --icon=src/assets/img/tradewest-mobile-full.ico",
+    "electron:build": "electron-builder",
+    "rebuild": "electron-rebuild -f -w lmdb"
   },
   "engines": {
     "node": "18.x",
     "npm": "8.x"
+  },
+  "rebuildConfig": {
+    "force": true,
+    "disabledModules": [
+      "lmdb"
+    ],
+    "modules": []
+  },
+  "build": {
+    "appId": "com.tradewest.app",
+    "productName": "Tradewest App",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "ConScottDev",
+        "repo": "tradewest-app"
+      }
+    ],
+    "mac": {
+      "target": "dmg",
+      "sign": false
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "src/assets/img/tradewest-mobile-full.ico"
+    },
+    "files": [
+      "**/*",
+      "!**/lmdb/**"
+    ]
   },
   "private": true,
   "dependencies": {
@@ -71,7 +112,8 @@
     "zone.js": "~0.14.10"
   },
   "resolutions": {
-    "rxjs": "7.5.7"
+    "rxjs": "7.5.7",
+    "**/lmdb": "2.4.0"
   },
   "devDependencies": {
     "@angular/compiler-cli": "^18.2.5",
@@ -83,9 +125,11 @@
     "@types/jasminewd2": "~2.0.10",
     "@types/jquery": "3.5.6",
     "@types/node": "^22.5.5",
-    "electron": "^32.1.2",
+    "electron": "^24.3.1",
     "electron-builder": "^26.0.12",
     "electron-packager": "^17.1.2",
+    "electron-rebuild": "^3.2.9",
+    "fs-extra": "^10.1.0",
     "jasmine-core": "~4.4.0",
     "jasmine-spec-reporter": "~7.0.0",
     "karma": "~6.4.0",
