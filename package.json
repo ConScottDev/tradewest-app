@@ -11,6 +11,15 @@
   "overrides": {
     "lmdb": "0.0.0"
   },
+  "build": {
+    "files": [
+      "main.js",
+      "preload.js",
+      "dist/**",
+      "node_modules/**",
+      "package.json"
+    ]
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
