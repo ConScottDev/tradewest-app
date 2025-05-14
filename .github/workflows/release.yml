@@ -3,11 +3,14 @@ name: Build & Release Electron App
 on:
   push:
     tags:
-      - 'v*' # Triggers only when a tag like v1.0.0 is pushed
+      - 'v*'
 
 jobs:
   build:
     runs-on: windows-latest
+
+    env:  # ✅ must be inside the job (same level as `runs-on`, not under `steps`)
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
     steps:
       - name: Checkout repo
@@ -24,11 +27,13 @@ jobs:
       - name: Build Electron App
         run: npm run dist
 
-      - name: Publish Release to GitHub
+      - name: Upload Release Assets
         uses: softprops/action-gh-release@v1
         with:
           files: |
             dist/*.exe
+            dist/*.yml
+            dist/*.blockmap
             dist/*.zip
             dist/*.tar.gz
         env:

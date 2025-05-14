@@ -37,30 +37,6 @@
     ],
     "modules": []
   },
-  "build": {
-    "appId": "com.tradewest.app",
-    "productName": "Tradewest App",
-    "publish": [
-      {
-        "provider": "github",
-        "releaseType": "release",
-        "owner": "ConScottDev",
-        "repo": "tradewest-app"
-      }
-    ],
-    "mac": {
-      "target": "dmg",
-      "sign": false
-    },
-    "win": {
-      "target": "nsis",
-      "icon": "src/assets/img/tradewest-mobile-full.ico"
-    },
-    "files": [
-      "**/*",
-      "!**/lmdb/**"
-    ]
-  },
   "private": true,
   "dependencies": {
     "@angular-devkit/architect": "^0.1802.5",
