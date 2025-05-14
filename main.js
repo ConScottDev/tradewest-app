@@ -3,16 +3,22 @@ const { autoUpdater } = require("electron-updater");
 const path = require("path");
 const { dialog } = require("electron");
 
+const { ipcMain, shell } = require('electron');
+const fs = require('fs');
+const os = require('os');
+
 function createWindow() {
-  const win = new BrowserWindow({ // Enable fullscreen mode
-    icon: path.join(__dirname, 'src/assets/img/tradewest-mobile-full.ico'),  // Set the icon (replace 'icon.png' with your image file)
+  const win = new BrowserWindow({
+    // Enable fullscreen mode
+    icon: path.join(__dirname, "src/assets/img/tradewest-mobile-full.ico"), // Set the icon (replace 'icon.png' with your image file)
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,  // Allow access to Node.js modules in the renderer process
+      nodeIntegration: false,
+      contextIsolation: true, // Allow access to Node.js modules in the renderer process
+      preload: path.join(__dirname, "preload.js"),
     },
   });
   win.maximize();
-win.show();
+  win.show();
 
   win.loadURL("https://tradewest-c870e.web.app/"); // Replace with your Firebase URL
 
@@ -20,6 +26,19 @@ win.show();
     autoUpdater.checkForUpdatesAndNotify();
   });
 }
+
+ipcMain.on('save-and-open-pdf', (event, uint8Array, fileName) => {
+  const buffer = Buffer.from(uint8Array);
+  const filePath = path.join(os.tmpdir(), fileName);
+
+  fs.writeFile(filePath, buffer, (err) => {
+    if (err) {
+      console.error('Failed to save PDF:', err);
+      return;
+    }
+    shell.openPath(filePath);
+  });
+});
 
 // app.whenReady().then(() => {
 //   createWindow();
@@ -50,7 +69,8 @@ autoUpdater.on("update-downloaded", () => {
     defaultId: 0,
     cancelId: 1,
     title: "Update Ready",
-    message: "A new version has been downloaded. Restart now to install the update?"
+    message:
+      "A new version has been downloaded. Restart now to install the update?",
   });
 
   if (result === 0) {

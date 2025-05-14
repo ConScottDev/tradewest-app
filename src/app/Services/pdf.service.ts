@@ -666,30 +666,31 @@ export class PDFService {
       },
     };
 
-    const isElectron = window && 'electronAPI' in window;
+    const isElectron = window && "electronAPI" in window;
 
-  if (isElectron) {
-    pdfMake.createPdf(docDefinition).getBlob((blob) => {
-      const reader = new FileReader();
-      reader.onload = function () {
-        const buffer = Buffer.from(this.result as ArrayBuffer);
-        window.electronAPI.saveAndOpenPDF(
-          buffer,
-          `${formattedCustomerName}_${invoice.invoiceNo}.pdf`
-        );
-      };
-      reader.readAsArrayBuffer(blob);
-    });
-  } else {
-    const pdfAction = pdfMake.createPdf(docDefinition);
-    if (action === "download") {
-      pdfAction.download(`${formattedCustomerName}_${invoice.invoiceNo}.pdf`);
-    } else if (action === "print") {
-      pdfAction.print();
+    if (isElectron) {
+      pdfMake.createPdf(docDefinition).getBlob((blob) => {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const arrayBuffer = this.result as ArrayBuffer;
+          const uint8Array = new Uint8Array(arrayBuffer);
+          window.electronAPI.saveAndOpenPDF(
+            uint8Array,
+            `${formattedCustomerName}_${invoice.invoiceNo}.pdf`
+          );
+        };
+        reader.readAsArrayBuffer(blob);
+      });
     } else {
-      pdfAction.open(); // Opens in new tab (browser only)
+      const pdfAction = pdfMake.createPdf(docDefinition);
+      if (action === "download") {
+        pdfAction.download(`${formattedCustomerName}_${invoice.invoiceNo}.pdf`);
+      } else if (action === "print") {
+        pdfAction.print();
+      } else {
+        pdfAction.open(); // Opens in new tab (browser only)
+      }
     }
-  }
   }
   generatePDFQuoteEmail(quoteData: Quote) {
     return new Promise((resolve, reject) => {
