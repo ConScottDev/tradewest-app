@@ -3,9 +3,9 @@ const { autoUpdater } = require("electron-updater");
 const path = require("path");
 const { dialog } = require("electron");
 
-const { ipcMain, shell } = require('electron');
-const fs = require('fs');
-const os = require('os');
+const { ipcMain, shell } = require("electron");
+const fs = require("fs");
+const os = require("os");
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -20,20 +20,20 @@ function createWindow() {
   win.maximize();
   win.show();
 
-  win.loadURL("https://tradewest-c870e.web.app/"); // Replace with your Firebase URL
+  win.loadFile(path.join(__dirname, "dist/tradewest/index.html"));
 
   win.once("ready-to-show", () => {
     autoUpdater.checkForUpdatesAndNotify();
   });
 }
 
-ipcMain.on('save-and-open-pdf', (event, uint8Array, fileName) => {
+ipcMain.on("save-and-open-pdf", (event, uint8Array, fileName) => {
   const buffer = Buffer.from(uint8Array);
   const filePath = path.join(os.tmpdir(), fileName);
 
   fs.writeFile(filePath, buffer, (err) => {
     if (err) {
-      console.error('Failed to save PDF:', err);
+      console.error("Failed to save PDF:", err);
       return;
     }
     shell.openPath(filePath);

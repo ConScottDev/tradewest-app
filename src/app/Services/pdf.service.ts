@@ -1,12 +1,13 @@
 import { Injectable } from "@angular/core";
 import { Statement } from "../statements/statement.model"; // Adjust import as necessary
 import { DatePipe } from "@angular/common";
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
 import { Invoice, Product } from "app/invoices/invoice.model";
 import { Quote } from "app/quotes/quote.model";
 
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+const pdfMake = require("pdfmake/build/pdfmake");
+const pdfFonts = require("pdfmake/build/vfs_fonts");
+
+pdfMake.vfs = pdfFonts.vfs;
 
 @Injectable({
   providedIn: "root",
@@ -15,22 +16,26 @@ export class PDFService {
   base64Image: string;
 
   constructor() {
-    this.convertImageToBase64();
+    // this.convertImageToBase64();
   }
 
-  convertImageToBase64() {
-    const imgPath = "/assets/img/tradewest-mobile-full.png"; // Adjust the image path as needed
-    const xhr = new XMLHttpRequest();
-    xhr.onload = () => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        this.base64Image = reader.result as string;
+  convertImageToBase64(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const imgPath = "assets/img/tradewest-mobile-full.png"; // Use relative path, no leading slash
+      const xhr = new XMLHttpRequest();
+      xhr.onload = () => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          this.base64Image = reader.result as string;
+          resolve();
+        };
+        reader.readAsDataURL(xhr.response);
       };
-      reader.readAsDataURL(xhr.response);
-    };
-    xhr.open("GET", imgPath);
-    xhr.responseType = "blob";
-    xhr.send();
+      xhr.onerror = reject;
+      xhr.open("GET", imgPath);
+      xhr.responseType = "blob";
+      xhr.send();
+    });
   }
 
   generatePDFStatement(invoice: Statement, action) {
@@ -462,7 +467,10 @@ export class PDFService {
     });
   }
 
-  generatePDFInvoice(invoiceData: Invoice, action) {
+  async generatePDFInvoice(invoiceData: Invoice, action) {
+    if (!this.base64Image) {
+      await this.convertImageToBase64();
+    }
     // Access form values once
     const products = invoiceData.products.map((p) => new Product(p));
 
@@ -624,28 +632,28 @@ export class PDFService {
             ],
             [
               {
-                text: "€" + invoice?.subTotal?.toFixed(2) ?? "0.00", // Total before VAT
+                text: "€" + (invoice?.subTotal?.toFixed(2) ?? "0.00"), // Total before VAT
                 alignment: "right",
                 margin: [0, 5, 4, 0],
                 fontSize: 12,
                 lineHeight: 1.2,
               },
               {
-                text: "€" + invoice?.totalVat?.toFixed(2) ?? "0.00", // Total VAT
+                text: "€" + (invoice?.totalVat?.toFixed(2) ?? "0.00"), // Total VAT
                 alignment: "right",
                 margin: [0, 5, 4, 0],
                 fontSize: 12,
                 lineHeight: 1.2,
               },
               {
-                text: "€" + invoice?.invoiceTotal?.toFixed(2) ?? "0.00", // Total including VAT
+                text: "€" + (invoice?.invoiceTotal?.toFixed(2) ?? "0.00"), // Total including VAT
                 alignment: "right",
                 margin: [0, 5, 4, 0],
                 fontSize: 12,
                 lineHeight: 1.2,
               },
               {
-                text: "€" + invoice?.invoiceTotal?.toFixed(2) ?? "0.00", // Balance Due
+                text: "€" + (invoice?.invoiceTotal?.toFixed(2) ?? "0.00"), // Balance Due
                 alignment: "right",
                 margin: [0, 5, 4, 0],
                 fontSize: 12,
@@ -847,21 +855,21 @@ export class PDFService {
               ],
               [
                 {
-                  text: "€" + quote?.subTotal?.toFixed(2) ?? "0.00", // Total before VAT
+                  text: "€" + (quote?.subTotal?.toFixed(2) ?? "0.00"), // Total before VAT
                   alignment: "right",
                   margin: [0, 5, 4, 0],
                   fontSize: 12,
                   lineHeight: 1.2,
                 },
                 {
-                  text: "€" + quote?.totalVat?.toFixed(2) ?? "0.00", // Total VAT
+                  text: "€" + (quote?.totalVat?.toFixed(2) ?? "0.00"), // Total VAT
                   alignment: "right",
                   margin: [0, 5, 4, 0],
                   fontSize: 12,
                   lineHeight: 1.2,
                 },
                 {
-                  text: "€" + quote?.quoteTotal?.toFixed(2) ?? "0.00", // Total including VAT
+                  text: "€" + (quote?.quoteTotal?.toFixed(2) ?? "0.00"), // Total including VAT
                   alignment: "right",
                   margin: [0, 5, 4, 0],
                   fontSize: 12,
@@ -1045,21 +1053,21 @@ export class PDFService {
             ],
             [
               {
-                text: "€" + quote?.subTotal?.toFixed(2) ?? "0.00", // Total before VAT
+                text: "€" + (quote?.subTotal?.toFixed(2) ?? "0.00"), // Total before VAT
                 alignment: "right",
                 margin: [0, 5, 4, 0],
                 fontSize: 12,
                 lineHeight: 1.2,
               },
               {
-                text: "€" + quote?.totalVat?.toFixed(2) ?? "0.00", // Total VAT
+                text: "€" + (quote?.totalVat?.toFixed(2) ?? "0.00"), // Total VAT
                 alignment: "right",
                 margin: [0, 5, 4, 0],
                 fontSize: 12,
                 lineHeight: 1.2,
               },
               {
-                text: "€" + quote?.quoteTotal?.toFixed(2) ?? "0.00", // Total including VAT
+                text: "€" + (quote?.quoteTotal?.toFixed(2) ?? "0.00"), // Total including VAT
                 alignment: "right",
                 margin: [0, 5, 4, 0],
                 fontSize: 12,
@@ -1253,28 +1261,28 @@ export class PDFService {
               ],
               [
                 {
-                  text: "€" + invoice?.subTotal?.toFixed(2) ?? "0.00", // Total before VAT
+                  text: "€" + (invoice?.subTotal?.toFixed(2) ?? "0.00"), // Total before VAT
                   alignment: "right",
                   margin: [0, 5, 4, 0],
                   fontSize: 12,
                   lineHeight: 1.2,
                 },
                 {
-                  text: "€" + invoice?.totalVat?.toFixed(2) ?? "0.00", // Total VAT
+                  text: "€" + (invoice?.totalVat?.toFixed(2) ?? "0.00"), // Total VAT
                   alignment: "right",
                   margin: [0, 5, 4, 0],
                   fontSize: 12,
                   lineHeight: 1.2,
                 },
                 {
-                  text: "€" + invoice?.invoiceTotal?.toFixed(2) ?? "0.00", // Total including VAT
+                  text: "€" + (invoice?.invoiceTotal?.toFixed(2) ?? "0.00"), // Total including VAT
                   alignment: "right",
                   margin: [0, 5, 4, 0],
                   fontSize: 12,
                   lineHeight: 1.2,
                 },
                 {
-                  text: "€" + invoice?.invoiceTotal?.toFixed(2) ?? "0.00", // Balance Due
+                  text: "€" + (invoice?.invoiceTotal?.toFixed(2) ?? "0.00"), // Balance Due
                   alignment: "right",
                   margin: [0, 5, 4, 0],
                   fontSize: 12,

@@ -161,10 +161,22 @@ export class EditInvoiceComponent {
   }
 
   // Remove a product from the FormArray
-  removeProduct(index: number) {
-    const productsFormArray = this.form.get("products") as FormArray;
-    productsFormArray.removeAt(index);
-  }
+  // removeProduct(index: number) {
+  //   const productsFormArray = this.form.get("products") as FormArray;
+  //   productsFormArray.removeAt(index);
+  // }
+
+removeProduct(index: number) {
+  console.log('Removing product at index:', index);
+  console.log('Before:', this.products.controls.map(c => c.value));
+
+  this.products.removeAt(index);
+
+  console.log('After:', this.products.controls.map(c => c.value));
+}
+
+
+
 
   updateInvoice() {
     // Convert form value into Invoice object

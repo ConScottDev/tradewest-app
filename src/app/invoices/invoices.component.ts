@@ -1,8 +1,8 @@
 import { DatePipe } from "@angular/common";
 import { Component, OnInit } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
+// import pdfMake from "pdfmake/build/pdfmake";
+// import pdfFonts from "pdfmake/build/vfs_fonts";
 import { catchError, first, map, Observable, of } from "rxjs";
 import { ChangeDetectorRef } from "@angular/core";
 import { InvoiceNoValidatorService } from "app/Services/invoiceValidator.service";
@@ -21,7 +21,10 @@ import { PDFService } from "app/Services/pdf.service";
 import { Invoice, Product } from "./invoice.model";
 import { InvoiceDialogComponent } from "./invoice-dialog/invoice-dialog.component";
 
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+const pdfMake = require("pdfmake/build/pdfmake");
+const pdfFonts = require("pdfmake/build/vfs_fonts");
+
+pdfMake.vfs = pdfFonts.vfs;
 
 @Component({
   selector: "app-invoices",
@@ -434,21 +437,21 @@ export class InvoicesComponent implements OnInit {
             ],
             [
               {
-                text: "€" + invoice?.subTotal.toFixed(2) ?? "0.00", // Total before VAT
+                text: "€" + (invoice?.subTotal.toFixed(2) ?? "0.00"), // Total before VAT
                 alignment: "right",
                 margin: [0, 5, 4, 0],
                 fontSize: 12,
                 lineHeight: 1.2,
               },
               {
-                text: "€" + invoice?.totalVat.toFixed(2) ?? "0.00", // Total VAT
+                text: "€" + (invoice?.totalVat.toFixed(2) ?? "0.00"), // Total VAT
                 alignment: "right",
                 margin: [0, 5, 4, 0],
                 fontSize: 12,
                 lineHeight: 1.2,
               },
               {
-                text: "€" + invoice?.invoiceTotal.toFixed(2) ?? "0.00", // Total including VAT
+                text: "€" + (invoice?.invoiceTotal.toFixed(2) ?? "0.00"), // Total including VAT
                 alignment: "right",
                 margin: [0, 5, 4, 0],
                 fontSize: 12,

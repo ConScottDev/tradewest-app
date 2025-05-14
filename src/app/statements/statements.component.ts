@@ -21,8 +21,10 @@ import { MatDialog } from "@angular/material/dialog";
 import { StatementDialogComponent } from "./statement-dialog/statement-dialog.component";
 import { PDFService } from "app/Services/pdf.service";
 
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+const pdfMake = require("pdfmake/build/pdfmake");
+const pdfFonts = require("pdfmake/build/vfs_fonts");
 
+pdfMake.vfs = pdfFonts.vfs;
 @Component({
   selector: "app-statements",
   templateUrl: "./statements.component.html",
