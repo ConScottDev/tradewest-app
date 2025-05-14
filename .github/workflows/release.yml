@@ -10,7 +10,7 @@ jobs:
     runs-on: windows-latest
 
     env:  # ✅ must be inside the job (same level as `runs-on`, not under `steps`)
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
     steps:
       - name: Checkout repo
@@ -34,7 +34,5 @@ jobs:
             dist/*.exe
             dist/*.yml
             dist/*.blockmap
-            dist/*.zip
-            dist/*.tar.gz
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
