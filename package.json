@@ -131,6 +131,6 @@
     "sass": "1.32.13",
     "sass-loader": "^16.0.2",
     "ts-node": "~10.9.1",
-    "typescript": "^5.5.2"
+    "typescript": "5.5.2"
   }
 }
