@@ -20,7 +20,8 @@ function createWindow() {
   win.maximize();
   win.show();
 
-  win.loadFile(path.join(__dirname, "index.html"));
+  win.loadFile(path.join(__dirname, "dist", "index.html"));
+
   win.once("ready-to-show", () => {
     autoUpdater.checkForUpdatesAndNotify();
   });
