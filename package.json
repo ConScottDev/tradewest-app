@@ -12,6 +12,7 @@
     "lmdb": "0.0.0"
   },
   "build": {
+    "productName": "Tradewest App",
     "files": [
       "main.js",
       "preload.js",
