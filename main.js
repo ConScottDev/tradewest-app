@@ -20,8 +20,7 @@ function createWindow() {
   win.maximize();
   win.show();
 
-  win.loadURL(`file://${path.join(__dirname, "dist/tradewest/index.html")}`);
-
+  win.loadFile(path.join(__dirname, "dist", "tradewest", "index.html"));
   win.once("ready-to-show", () => {
     autoUpdater.checkForUpdatesAndNotify();
   });
