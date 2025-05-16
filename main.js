@@ -20,7 +20,7 @@ function createWindow() {
   win.maximize();
   win.show();
 
-  win.loadFile(path.join(__dirname, "dist", "tradewest", "index.html"));
+  win.loadFile(path.join(__dirname, "index.html"));
   win.once("ready-to-show", () => {
     autoUpdater.checkForUpdatesAndNotify();
   });

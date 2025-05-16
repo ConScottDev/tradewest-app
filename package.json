@@ -31,7 +31,7 @@
     "install:clean": "rimraf node_modules package-lock.json && npm install && ng serve -o",
     "preinstall": "npx npm-force-resolutions",
     "electron": "electron .",
-    "dist": "electron-builder --win --x64 --publish=always",
+    "dist": "electron-builder --win --x64 --publish=never",
     "package-win": "electron-packager . --platform=win32 --arch=x64 --out=dist --overwrite --icon=src/assets/img/tradewest-mobile-full.ico",
     "electron:build": "electron-builder",
     "rebuild": "electron-rebuild -f -w lmdb"
