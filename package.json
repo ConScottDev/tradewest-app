@@ -1,6 +1,6 @@
 {
   "name": "material-dashboard-angular",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Desktop application for Tradewest",
   "author": {
     "name": "Conor Scott",
@@ -14,10 +14,10 @@
   "build": {
     "productName": "Tradewest App",
     "publish": {
-    "provider": "github",
-    "owner": "ConScottDev",
-    "repo": "tradewest-app"
-  },
+      "provider": "github",
+      "owner": "ConScottDev",
+      "repo": "tradewest-app"
+    },
     "files": [
       "main.js",
       "preload.js",
