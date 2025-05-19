@@ -13,6 +13,9 @@
   },
   "build": {
     "productName": "Tradewest App",
+    "directories": {
+    "output": "release"
+  },
     "publish": {
       "provider": "github",
       "owner": "ConScottDev",

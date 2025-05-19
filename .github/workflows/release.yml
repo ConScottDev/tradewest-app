@@ -34,8 +34,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            dist/*.exe
-            dist/*.yml
-            dist/*.blockmap
+            release/*.exe
+            release/*.yml
+            release/*.blockmap
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
