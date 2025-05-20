@@ -14,29 +14,26 @@ autoUpdater.logger.transports.file.level = "debug";
 
 function createWindow() {
   const win = new BrowserWindow({
-    // Enable fullscreen mode
-    icon: path.join(__dirname, "src/assets/img/tradewest-mobile-full.ico"), // Set the icon (replace 'icon.png' with your image file)
+    icon: path.join(__dirname, "src/assets/img/tradewest-mobile-full.ico"),
     webPreferences: {
       nodeIntegration: false,
-      contextIsolation: true, // Allow access to Node.js modules in the renderer process
+      contextIsolation: true,
       preload: path.join(__dirname, "preload.js"),
     },
   });
+
   win.maximize();
   win.show();
 
-  win.loadFile(path.join(__dirname, "dist", "index.html"));
+  // ✅ Use dynamic pathing based on asar packaging
+  const startUrl = path.join(__dirname, 'dist', 'index.html');
+  win.loadFile(startUrl);
 
-  // win.once("ready-to-show", () => {
-  //   autoUpdater.checkForUpdatesAndNotify();
-  // });
-
-  app.on("ready", () => {
-  createWindow();
-  console.log("📦 App ready. Checking for updates...");
-  autoUpdater.checkForUpdatesAndNotify();
-});
+  win.once("ready-to-show", () => {
+    autoUpdater.checkForUpdatesAndNotify();
+  });
 }
+
 
 ipcMain.on("save-and-open-pdf", (event, uint8Array, fileName) => {
   const buffer = Buffer.from(uint8Array);
