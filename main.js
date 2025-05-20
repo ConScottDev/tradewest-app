@@ -27,9 +27,15 @@ function createWindow() {
 
   win.loadFile(path.join(__dirname, "dist", "index.html"));
 
-  win.once("ready-to-show", () => {
-    autoUpdater.checkForUpdatesAndNotify();
-  });
+  // win.once("ready-to-show", () => {
+  //   autoUpdater.checkForUpdatesAndNotify();
+  // });
+
+  app.on("ready", () => {
+  createWindow();
+  console.log("📦 App ready. Checking for updates...");
+  autoUpdater.checkForUpdatesAndNotify();
+});
 }
 
 ipcMain.on("save-and-open-pdf", (event, uint8Array, fileName) => {
