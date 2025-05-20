@@ -7,6 +7,11 @@ const { ipcMain, shell } = require("electron");
 const fs = require("fs");
 const os = require("os");
 
+const log = require("electron-log");
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = "debug";
+
+
 function createWindow() {
   const win = new BrowserWindow({
     // Enable fullscreen mode
@@ -40,15 +45,6 @@ ipcMain.on("save-and-open-pdf", (event, uint8Array, fileName) => {
   });
 });
 
-// app.whenReady().then(() => {
-//   createWindow();
-
-//   app.on("activate", () => {
-//     if (BrowserWindow.getAllWindows().length === 0) {
-//       createWindow();
-//     }
-//   });
-// });
 app.on("ready", createWindow);
 
 app.on("window-all-closed", () => {
@@ -57,10 +53,27 @@ app.on("window-all-closed", () => {
   }
 });
 
-// Listen for updates
-autoUpdater.on("update-available", () => {
-  console.log("Update available");
+autoUpdater.on("checking-for-update", () => {
+  console.log("🕵️ Checking for update...");
 });
+
+autoUpdater.on("update-available", (info) => {
+  console.log("✅ Update available:", info);
+});
+
+autoUpdater.on("update-not-available", (info) => {
+  console.log("🚫 No update available:", info);
+});
+
+autoUpdater.on("download-progress", (progress) => {
+  console.log(`⬇️ Downloaded ${progress.percent.toFixed(2)}%`);
+  console.log(`💾 Speed: ${progress.bytesPerSecond} bytes/sec`);
+});
+
+autoUpdater.on("error", (err) => {
+  console.error("❌ Update error:", err);
+});
+
 
 autoUpdater.on("update-downloaded", () => {
   const result = dialog.showMessageBoxSync({
