@@ -1,16 +1,14 @@
 appId: com.tradewest.app
 productName: Tradewest App
+artifactName: "Tradewest-App-Setup-${version}.${ext}"
 files:
   - "**/*"
   - "!**/lmdb/**"
 win:
   target: nsis
   icon: src/assets/img/tradewest-mobile-full.ico
-mac:
-  target: dmg
-  sign: false
 publish:
   provider: github
-  releaseType: release
   owner: ConScottDev
   repo: tradewest-app
+  releaseType: release
