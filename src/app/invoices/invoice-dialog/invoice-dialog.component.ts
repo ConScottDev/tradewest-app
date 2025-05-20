@@ -59,4 +59,19 @@ export class InvoiceDialogComponent {
     this.dialogRef.close();
   }
 
+  confirmPaidStatus(newStatus: boolean) {
+  const action = newStatus ? 'mark this invoice as PAID' : 'mark this invoice as UNPAID';
+  const confirmed = confirm(`Are you sure you want to ${action}?`);
+  if (!confirmed) return;
+
+  this.firestore
+    .collection('invoices')
+    .doc(this.invoice.id)
+    .update({ paid: newStatus })
+    .then(() => {
+      this.invoice.paid = newStatus;
+    });
+}
+
+
 }

@@ -287,7 +287,6 @@ export class InvoicesComponent implements OnInit {
       return new Product(product.value); // Assuming Product class takes an object in its constructor
     });
 
-
     const invoice = new Invoice({ ...invoiceData, products: productsArray });
 
     const formattedCustomerName = invoice.customerName.replace(/ /g, "_");

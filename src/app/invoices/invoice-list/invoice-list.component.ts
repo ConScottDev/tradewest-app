@@ -84,24 +84,34 @@ export class InvoiceListComponent {
   }
 
   setFilter(filter: string) {
-    this.currentFilter = filter;
+  this.currentFilter = filter;
 
-    if (filter === "drafts") {
-      // Query Firestore directly for draft invoices
-      this.filteredInvoices$ = this.firestore
-        .collection("invoices", (ref) => ref.where("status", "==", "draft"))
-        .valueChanges()
-        .pipe(
-          map((invoices) => {
-            console.log("Draft invoices from Firestore:", invoices); // Log draft invoices
-            return invoices.map((invoice) => new Invoice(invoice));
-          })
-        );
-    } else {
-      // Show all invoices
-      this.filteredInvoices$ = this.invoices$;
-    }
+  if (filter === "drafts") {
+    this.filteredInvoices$ = this.firestore
+      .collection("invoices", (ref) => ref.where("status", "==", "draft"))
+      .valueChanges()
+      .pipe(map((invoices) => invoices.map((i) => new Invoice(i))));
+  } else if (filter === "paid") {
+    this.filteredInvoices$ = this.firestore
+      .collection("invoices", (ref) => ref.where("paid", "==", true))
+      .valueChanges()
+      .pipe(map((invoices) => invoices.map((i) => new Invoice(i))));
+  } else if (filter === "unpaid") {
+    this.filteredInvoices$ = this.firestore
+      .collection("invoices", (ref) => ref.where("status", "==", "final").orderBy("invoiceDate", "desc"))
+      .valueChanges()
+      .pipe(
+        map((invoices: Invoice[]) =>
+          invoices
+            .filter((i) => i.paid === false || i.paid === undefined)
+            .map((i) => new Invoice(i))
+        )
+      );
+  } else {
+    this.filteredInvoices$ = this.invoices$; // Show all
   }
+}
+
 
   openPDF(invoice: Invoice, string) {
     this.pdfService.generatePDFInvoice(invoice, string);

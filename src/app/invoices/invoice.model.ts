@@ -38,11 +38,8 @@ export class Invoice {
 
   products: Product[] = [];
   additionalDetails: string;
+  paid: boolean = false; // default to false
 
-  // constructor() {
-  //   // Initially one empty product row we will show
-  //   this.products.push(new Product());
-  // }
   constructor(invoice?: any) {
     if (invoice) {
       this.id = invoice.id; // Set the ID if passed
@@ -65,6 +62,7 @@ export class Invoice {
       this.status = invoice.status || "draft"; // Default to draft if no status is provided
       this.products = invoice.products || [];
       this.additionalDetails = invoice.additionalDetails || "";
+      this.paid = invoice.paid ?? false;
     }
   }
   getFullAddress(): string {
@@ -75,7 +73,10 @@ export class Invoice {
 
   // Getter to calculate the total of all product totals (before VAT)
   get invoiceTotal(): number {
-    return this.products.reduce((sum, product) => sum + (product.total || 0), 0);
+    return this.products.reduce(
+      (sum, product) => sum + (product.total || 0),
+      0
+    );
   }
 
   // Getter to calculate the total VAT for all products

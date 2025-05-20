@@ -25,6 +25,29 @@
                     <a
                       mat-button
                       class="nav-link"
+                      [class.active]="currentFilter === 'paid'"
+                      (click)="setFilter('paid')"
+                    >
+                      <i class="material-icons">check_circle</i> Paid
+                      <div class="ripple-container"></div>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a
+                      mat-button
+                      class="nav-link"
+                      [class.active]="currentFilter === 'unpaid'"
+                      (click)="setFilter('unpaid')"
+                    >
+                      <i class="material-icons">hourglass_empty</i> Unpaid
+                      <div class="ripple-container"></div>
+                    </a>
+                  </li>
+
+                  <li class="nav-item">
+                    <a
+                      mat-button
+                      class="nav-link"
                       [class.active]="currentFilter === 'all'"
                       (click)="setFilter('all')"
                     >
@@ -56,6 +79,7 @@
                   <th>Date</th>
                   <th>Subtotal</th>
                   <th>Total</th>
+                  <th>Paid</th>
                   <th></th>
                 </thead>
                 <tbody>
@@ -87,6 +111,16 @@
                       €{{ invoice.subTotal | number : "1.2-2" }}
                     </td>
                     <td class="text-primary">€{{ invoice.invoiceTotal }}</td>
+                    <td>
+                      <mat-icon
+                        *ngIf="invoice.paid"
+                        class="ml-2"
+                        style="vertical-align: middle; color: #5cb85c"
+                      >
+                        check_circle
+                      </mat-icon>
+                    </td>
+
                     <td>
                       <button
                         mat-raised-button
