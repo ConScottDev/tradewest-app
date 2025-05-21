@@ -112,12 +112,22 @@
                     </td>
                     <td class="text-primary">€{{ invoice.invoiceTotal }}</td>
                     <td>
+                      <!-- ✅ Green icon for explicitly paid -->
                       <mat-icon
-                        *ngIf="invoice.paid"
+                        *ngIf="isPaid(invoice)"
                         class="ml-2"
                         style="vertical-align: middle; color: #5cb85c"
                       >
                         check_circle
+                      </mat-icon>
+
+                      <!-- ❌ Red icon only for explicitly unpaid -->
+                      <mat-icon
+                        *ngIf="isUnpaid(invoice)"
+                        class="ml-2"
+                        style="vertical-align: middle; color: #c70000"
+                      >
+                        close
                       </mat-icon>
                     </td>
 

@@ -84,34 +84,51 @@ export class InvoiceListComponent {
   }
 
   setFilter(filter: string) {
-  this.currentFilter = filter;
+    this.currentFilter = filter;
 
-  if (filter === "drafts") {
-    this.filteredInvoices$ = this.firestore
-      .collection("invoices", (ref) => ref.where("status", "==", "draft"))
-      .valueChanges()
-      .pipe(map((invoices) => invoices.map((i) => new Invoice(i))));
-  } else if (filter === "paid") {
-    this.filteredInvoices$ = this.firestore
-      .collection("invoices", (ref) => ref.where("paid", "==", true))
-      .valueChanges()
-      .pipe(map((invoices) => invoices.map((i) => new Invoice(i))));
-  } else if (filter === "unpaid") {
-    this.filteredInvoices$ = this.firestore
-      .collection("invoices", (ref) => ref.where("status", "==", "final").orderBy("invoiceDate", "desc"))
-      .valueChanges()
-      .pipe(
-        map((invoices: Invoice[]) =>
-          invoices
-            .filter((i) => i.paid === false || i.paid === undefined)
-            .map((i) => new Invoice(i))
-        )
-      );
-  } else {
-    this.filteredInvoices$ = this.invoices$; // Show all
+    if (filter === "drafts") {
+      this.filteredInvoices$ = this.firestore
+        .collection("invoices", (ref) => ref.where("status", "==", "draft"))
+        .snapshotChanges()
+        .pipe(
+          map((actions) =>
+            actions.map((a) => {
+              const data = a.payload.doc.data() as any;
+              const id = a.payload.doc.id;
+              return new Invoice({ id, ...data });
+            })
+          )
+        );
+    } else if (filter === "paid") {
+      this.filteredInvoices$ = this.firestore
+        .collection("invoices", (ref) => ref.where("paid", "==", true))
+        .snapshotChanges()
+        .pipe(
+          map((actions) =>
+            actions.map((a) => {
+              const data = a.payload.doc.data() as any;
+              const id = a.payload.doc.id;
+              return new Invoice({ id, ...data });
+            })
+          )
+        );
+    } else if (filter === "unpaid") {
+      this.filteredInvoices$ = this.firestore
+        .collection("invoices", (ref) => ref.where("paid", "==", false))
+        .snapshotChanges()
+        .pipe(
+          map((actions) =>
+            actions.map((a) => {
+              const data = a.payload.doc.data() as any;
+              const id = a.payload.doc.id;
+              return new Invoice({ id, ...data });
+            })
+          )
+        );
+    } else if (filter === "all") {
+      this.filteredInvoices$ = this.invoices$; // ✅ Always reset to original stream
+    }
   }
-}
-
 
   openPDF(invoice: Invoice, string) {
     this.pdfService.generatePDFInvoice(invoice, string);
@@ -135,4 +152,19 @@ export class InvoiceListComponent {
       }
     });
   }
+
+  hasBeenMarkedAsPaid(invoice: any): boolean {
+  return invoice.hasOwnProperty('paid');
+}
+
+isPaid(invoice: any): boolean {
+  return invoice.paid === true;
+}
+
+isUnpaid(invoice: any): boolean {
+  return invoice.paid === false;
+}
+
+
+
 }

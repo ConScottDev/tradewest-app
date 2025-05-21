@@ -159,9 +159,13 @@ export class EditStatementsComponent {
 
   // Remove a product from the FormArray
   removeProduct(index: number) {
-    const productsFormArray = this.form.get("products") as FormArray;
-    productsFormArray.removeAt(index);
-  }
+  console.log('Removing product at index:', index);
+  console.log('Before:', this.products.controls.map(c => c.value));
+
+  this.products.removeAt(index);
+
+  console.log('After:', this.products.controls.map(c => c.value));
+}
 
   updateStatement() {
     this.firestore

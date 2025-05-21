@@ -21,10 +21,11 @@
     <strong>Status:</strong>
     {{ invoice.status === "final" ? "Finished" : "Draft" }}
   </p>
-  <p>
-    <strong>Paid:</strong>
-    {{ invoice.paid === true ? "Paid" : "Unpaid" }}
-  </p>
+  <p *ngIf="invoice.paid === true || invoice.paid === false">
+  <strong>Paid:</strong>
+  {{ invoice.paid ? "Paid" : "Unpaid" }}
+</p>
+
 </div>
 
 <div mat-dialog-actions class="justify-content-between">
@@ -49,19 +50,21 @@
       Download
     </button>
     <button
-      mat-menu-item
-      *ngIf="invoice.status === 'final' && !invoice.paid"
-      (click)="confirmPaidStatus(true)"
-    >
-      Mark as Paid
-    </button>
-    <button
-      mat-menu-item
-      *ngIf="invoice.status === 'final' && invoice.paid"
-      (click)="confirmPaidStatus(false)"
-    >
-      Mark as Unpaid
-    </button>
+  mat-menu-item
+  *ngIf="invoice.status === 'final' && (invoice.paid === false || invoice.paid === undefined)"
+  (click)="confirmPaidStatus(true)"
+>
+  Mark as Paid
+</button>
+
+<button
+  mat-menu-item
+  *ngIf="invoice.status === 'final' && (invoice.paid === true || invoice.paid === undefined)"
+  (click)="confirmPaidStatus(false)"
+>
+  Mark as Unpaid
+</button>
+
     <button mat-menu-item (click)="editInvoice()">Edit Invoice</button>
     <button mat-menu-item (click)="sendEmail()">Email Invoice</button>
   </mat-menu>

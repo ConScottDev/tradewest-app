@@ -21,19 +21,17 @@ import { PDFService } from "app/Services/pdf.service";
 import { Product, Quote } from "./quote.model";
 import { QuoteDialogComponent } from "./quote-dialog/quote-dialog.component";
 
-
 const pdfMake = require("pdfmake/build/pdfmake");
 const pdfFonts = require("pdfmake/build/vfs_fonts");
 
 pdfMake.vfs = pdfFonts.vfs;
 
 @Component({
-  selector: 'app-quotes',
-  templateUrl: './quotes.component.html',
-  styleUrl: './quotes.component.scss'
+  selector: "app-quotes",
+  templateUrl: "./quotes.component.html",
+  styleUrl: "./quotes.component.scss",
 })
 export class QuotesComponent {
-
   quote = new Quote();
   quotes$: Observable<Quote[]>;
   vat: number;
@@ -84,9 +82,7 @@ export class QuotesComponent {
     this.convertImageToBase64();
 
     this.quotes$ = this.firestore
-      .collection("quotes", (ref) =>
-        ref.orderBy("quoteDate", "desc").limit(6)
-      )
+      .collection("quotes", (ref) => ref.orderBy("quoteDate", "desc").limit(6))
       .snapshotChanges()
       .pipe(
         map((actions) => {
@@ -104,7 +100,7 @@ export class QuotesComponent {
       );
   }
 
-  generateQuoteNo(){
+  generateQuoteNo() {
     this.firestore
       .collection<Quote>("quotes", (ref) =>
         ref.orderBy("quoteNo", "desc").limit(1)
@@ -163,7 +159,15 @@ export class QuotesComponent {
 
   // Remove a product from the products array
   removeProduct(index: number) {
+    console.log("Removing product at index:", index);
+    console.log(
+      "Before:",
+      this.products.controls.map((c) => c.value)
+    );
+
     this.products.removeAt(index);
+
+
   }
 
   quoteNoExistsValidator(): (
@@ -219,31 +223,33 @@ export class QuotesComponent {
     console.log(event);
   }
 
-
   saveAsDraft() {
     this.form.get("status").setValue("draft");
-  
+
     const quoteDateControl = this.form.get("quoteDate");
-  
+
     // Check if quoteDate is a Moment object, and convert it to a JavaScript Date object
-    if (quoteDateControl.value && typeof quoteDateControl.value.toDate === 'function') {
+    if (
+      quoteDateControl.value &&
+      typeof quoteDateControl.value.toDate === "function"
+    ) {
       quoteDateControl.setValue(quoteDateControl.value.toDate()); // Convert Moment to Date
     }
-  
+
     // Set to today's date if no custom date has been set
     if (!quoteDateControl.value) {
       quoteDateControl.setValue(new Date()); // Default to today's date
     }
-  
+
     // Extract the form data, including the correct date format
     const draftQuoteData = this.form.value;
-  
+
     this.saveQuoteToFirestore(draftQuoteData)
       .then(() => {
         this.snackBar.open("Draft saved successfully!", "Close", {
           duration: 3000,
         });
-  
+
         this.form.reset(); // Prevent duplicate entries
       })
       .catch((error) => {
@@ -503,7 +509,6 @@ export class QuotesComponent {
       .then(() => {
         console.log("Quote saved successfully!");
         this.router.navigate(["/quotes-list"]); // Navigate to edit page with ID
-
       })
       .catch((error) => {
         console.error("Error saving quote to Firestore: ", error);
@@ -534,5 +539,4 @@ export class QuotesComponent {
   openPDF(quote: Quote, action: "open") {
     this.pdfService.generatePDFQuote(quote, action);
   }
-
 }

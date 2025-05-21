@@ -62,7 +62,8 @@ export class Invoice {
       this.status = invoice.status || "draft"; // Default to draft if no status is provided
       this.products = invoice.products || [];
       this.additionalDetails = invoice.additionalDetails || "";
-      this.paid = invoice.paid ?? false;
+      this.paid = invoice.paid;
+
     }
   }
   getFullAddress(): string {

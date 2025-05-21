@@ -38,7 +38,10 @@ export class PDFService {
     });
   }
 
-  generatePDFStatement(invoice: Statement, action) {
+  async generatePDFStatement(invoice: Statement, action) {
+    if (!this.base64Image) {
+      await this.convertImageToBase64();
+    }
     const fullAddress = invoice.getFullAddress();
 
     //image location
@@ -66,7 +69,7 @@ export class PDFService {
         {
           columns: [
             {
-              image: this.base64Image,
+              image: this.base64Image || null,
               width: 120,
               margin: [0, 30, 0, 10],
             },
@@ -236,6 +239,31 @@ export class PDFService {
         tableFont: {},
       },
     };
+
+    const isElectron = window && "electronAPI" in window;
+    if (isElectron) {
+      pdfMake.createPdf(docDefinition).getBlob((blob) => {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const arrayBuffer = this.result as ArrayBuffer;
+          const uint8Array = new Uint8Array(arrayBuffer);
+          window.electronAPI.saveAndOpenPDF(
+            uint8Array,
+            `${formattedCustomerName}_${invoice.invoiceNo}.pdf`
+          );
+        };
+        reader.readAsArrayBuffer(blob);
+      });
+    } else {
+      const pdfAction = pdfMake.createPdf(docDefinition);
+      if (action === "download") {
+        pdfAction.download(`${formattedCustomerName}_${invoice.invoiceNo}.pdf`);
+      } else if (action === "print") {
+        pdfAction.print();
+      } else {
+        pdfAction.open(); // Opens in new tab (browser only)
+      }
+    }
 
     if (action === "download") {
       pdfMake
@@ -662,6 +690,12 @@ export class PDFService {
             ],
           ],
         },
+        {
+          text: "Please Note to activate extended warranties on power tools, tools must be registered with selected brands. Please refer to our website for more information.",
+          bold: true,
+          margin: [0, 50, 0, 10],
+          lineHeight: 1.4,
+        }
       ],
       styles: {
         sectionHeader: {
@@ -899,7 +933,10 @@ export class PDFService {
       });
     });
   }
-  generatePDFQuote(quoteData: Quote, action) {
+  async generatePDFQuote(quoteData: Quote, action) {
+    if (!this.base64Image) {
+      await this.convertImageToBase64();
+    }
     // Access form values once
     const products = quoteData.products.map((p) => new Product(p));
 
@@ -1088,14 +1125,30 @@ export class PDFService {
       },
     };
 
-    // Handle PDF actions (download, print, or open)
-    const pdfAction = pdfMake.createPdf(docDefinition);
-    if (action === "download") {
-      pdfAction.download(`${formattedCustomerName}_${quote.quoteNo}.pdf`);
-    } else if (action === "print") {
-      pdfAction.print();
+    const isElectron = window && "electronAPI" in window;
+
+    if (isElectron) {
+      pdfMake.createPdf(docDefinition).getBlob((blob) => {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const arrayBuffer = this.result as ArrayBuffer;
+          const uint8Array = new Uint8Array(arrayBuffer);
+          window.electronAPI.saveAndOpenPDF(
+            uint8Array,
+            `${formattedCustomerName}_${quote.quoteNo}.pdf`
+          );
+        };
+        reader.readAsArrayBuffer(blob);
+      });
     } else {
-      pdfAction.open();
+      const pdfAction = pdfMake.createPdf(docDefinition);
+      if (action === "download") {
+        pdfAction.download(`${formattedCustomerName}_${quote.quoteNo}.pdf`);
+      } else if (action === "print") {
+        pdfAction.print();
+      } else {
+        pdfAction.open();
+      }
     }
   }
   generatePDFInvoiceEmail(invoiceData: Invoice) {

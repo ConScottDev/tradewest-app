@@ -161,8 +161,13 @@ export class InvoicesComponent implements OnInit {
 
   // Remove a product from the products array
   removeProduct(index: number) {
-    this.products.removeAt(index);
-  }
+  console.log('Removing product at index:', index);
+  console.log('Before:', this.products.controls.map(c => c.value));
+
+  this.products.removeAt(index);
+
+  console.log('After:', this.products.controls.map(c => c.value));
+}
 
   invoiceNoExistsValidator(): (
     control: AbstractControl
